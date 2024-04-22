@@ -45,3 +45,27 @@ def change_date_format(file):
         date_iso = datetime.datetime.fromisoformat(date['date'])
         list_change_date.append(date_iso.strftime("%d.%m.%Y"))
     return list_change_date
+
+
+def change_from_format(file):
+    '''
+    изменение вида вывода номера карты
+    или счета со звездочками
+    '''
+    list_change_card = []
+    list_operation = file
+    for item in list_operation:
+        if item.get('from') == None:
+            list_change_card.append("Нет данных")
+        elif "Счет" in item.get('from'):
+            list_change_card.append(f"Счет **{item['from'][-4:]}")
+        else:
+            card_new = ""
+            card_number = item['from'].split()[-1]
+            private_number = card_number[:6] + (len(card_number[6:-4]) * '*') + card_number[-4:]
+            len_private_number, separation_private_number = len(private_number), len(private_number) // 4
+            card_new += " ".join(item['from'].split()[:-1])
+            card_new += " "
+            card_new += " ".join([private_number[i:i + separation_private_number] for i in range(0, len_private_number, separation_private_number)])
+            list_change_card.append(card_new)
+    return list_change_card
